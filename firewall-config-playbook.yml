@@ -1,0 +1,91 @@
+- name: Firewall Configuration Playbook SEC-440
+  connection: network_cli
+  hosts: firewalls
+  tasks:
+    - name: Create firewalls
+      vyos_config:
+        backup: yes
+        save: yes
+        lines:
+          - set firewall name WAN-to-LAN default-action drop
+          - set firewall name WAN-to-LAN enable-default-log
+          - set firewall name LAN-to-WAN default-action drop
+          - set firewall name LAN-to-WAN enable-default-log
+          - set firewall name WAN-to-OPT default-action drop
+          - set firewall name WAN-to-OPT enable-default-log
+          - set firewall name OPT-to-WAN default-action drop
+          - set firewall name OPT-to-WAN enable-default-log
+          - set firewall name OPT-to-LAN default-action drop
+          - set firewall name OPT-to-LAN enable-default-log
+          - set firewall name LAN-to-OPT default-action drop
+          - set firewall name LAN-to-OPT enable-default-log
+
+    - name: Create firewall zone policies
+      vyos_config:
+        backup: yes
+        save: yes
+        lines:
+          - set zone-policy zone LAN from WAN firewall name WAN-to-LAN
+          - set zone-policy zone WAN from LAN firewall name LAN-to-WAN
+          - set zone-policy zone OPT from WAN firewall name WAN-to-OPT
+          - set zone-policy zone WAN from OPT firewall name OPT-to-WAN
+          - set zone-policy zone LAN from OPT firewall name OPT-to-LAN
+          - set zone-policy zone OPT from LAN firewall name LAN-to-OPT
+
+    - name: add firewall rules
+      vyos_config:
+        backup: yes
+        save: yes
+        lines:
+          - set firewall name LAN-to-WAN rule 1 action accept
+          - set firewall name LAN-to-WAN rule 1 description "Allow any traffic out"
+          - set firewall name WAN-to-LAN rule 10 action accept
+          - set firewall name WAN-to-LAN rule 10 description "Allow established connections into LAN"
+          - set firewall name WAN-to-LAN rule 10 state established enable
+          - set firewall name WAN-to-LAN rule 20 action accept
+          - set firewall name WAN-to-LAN rule 20 description "Allow HTTP Port 80 to web01"
+          - set firewall name WAN-to-LAN rule 20 destination address 10.0.5.100
+          - set firewall name WAN-to-LAN rule 20 protocol tcp 
+          - set firewall name WAN-to-LAN rule 20 destination port 80
+          - set firewall name WAN-to-LAN rule 30 action accept
+          - set firewall name WAN-to-LAN rule 30 description "Allow SSH Port 22 to web01"
+          - set firewall name WAN-to-LAN rule 30 destination address 10.0.5.100
+          - set firewall name WAN-to-LAN rule 30 protocol tcp
+          - set firewall name WAN-to-LAN rule 30 destination port 22
+
+    - name: add nat config
+      vyos_config:
+        backup: yes
+        save: yes
+        lines:
+          - set nat destination rule 10 description "NAT from WAN to web01 HTTP Port 80"
+          - set nat destination rule 10 inbound-interface eth0
+          - set nat destination rule 10 source address 10.0.17.73/24
+          - set nat destination rule 10 protocol tcp
+          - set nat destination rule 10 destination port 80
+          - set nat destination rule 10 translation address 10.0.5.100
+          - set nat destination rule 20 description "NAT from WAN to web01 SSH Port 22"
+          - set nat destination rule 20 inbound-interface eth0
+          - set nat destination rule 20 source address 10.0.17.73/24
+          - set nat destination rule 20 protocol tcp
+          - set nat destination rule 20 destination port 22
+          - set nat destination rule 20 translation address 10.0.5.100
+          - set nat source rule 10 description "Masquerading for LAN"
+          - set nat source rule 10 outbound-interface eth0
+          - set nat source rule 10 source address 10.0.5.0/24
+          - set nat source rule 10 translation address masquerade
+
+    - name: add high availability config
+      vyos_config:
+        backup: yes
+        save: yes
+        lines:
+          - set high-availability vrrp group LAN vrid 10
+          - set high-availability vrrp group LAN interface eth1
+          - set high-availability vrrp group LAN virtual-address 10.0.5.1/24
+          - set high-availability vrrp group OPT vrid 20
+          - set high-availability vrrp group OPT interface eth2
+          - set high-availability vrrp group OPT virtual-address 10.0.6.1/24
+          - set high-availability vrrp group wangroup3 vrid 153
+          - set high-availability vrrp group wangroup3 interface eth0
+          - set high-availability vrrp group wangroup3 virtual-address 10.0.17.73/24
