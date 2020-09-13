@@ -69,6 +69,8 @@ high-availability {
     vrrp {
         group LAN {
             interface eth1
+            peer-address 10.0.5.2
+            priority 1
             virtual-address 10.0.5.1/24
             vrid 10
         }
@@ -79,6 +81,8 @@ high-availability {
         }
         group wangroup3 {
             interface eth0
+            peer-address 10.0.17.13
+            priority 1
             virtual-address 10.0.17.73/24
             vrid 153
         }
@@ -112,9 +116,6 @@ nat {
             }
             inbound-interface eth0
             protocol tcp
-            source {
-                address 10.0.17.73/24
-            }
             translation {
                 address 10.0.5.100
             }
@@ -126,9 +127,6 @@ nat {
             }
             inbound-interface eth0
             protocol tcp
-            source {
-                address 10.0.17.73/24
-            }
             translation {
                 address 10.0.5.100
             }
