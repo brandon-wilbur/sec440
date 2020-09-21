@@ -1,0 +1,64 @@
+- name: Firewall configure OPT network
+  connection: network_cli
+  hosts: firewalls
+  tasks:
+       
+    - name: Permanent changes to OPT network firewalls
+      vyos_config:
+        backup: yes
+        save: yes
+        lines:
+          - set firewall name OPT-to-WAN rule 10 description "Allow established traffic back out"
+          - set firewall name OPT-to-WAN rule 10 action accept
+          - set firewall name OPT-to-WAN rule 10 state established enable
+          - set firewall name WAN-to-OPT rule 10 description "Allow web traffic into OPT network"
+          - set firewall name WAN-to-OPT rule 10 action accept
+          - set firewall name WAN-to-OPT rule 10 destination address 10.0.6.5
+          - set firewall name WAN-to-OPT rule 10 protocol tcp
+          - set firewall name WAN-to-OPT rule 10 destination port 80
+          - set firewall name WAN-to-OPT rule 20 description "Allow established traffic back in"
+          - set firewall name WAN-to-OPT rule 20 action accept
+          - set firewall name WAN-to-OPT rule 20 state established enable
+
+    - name: Change inbound NAT to hit VIP in OPT network
+      vyos_config:
+        backup: yes
+        save: yes
+        lines:
+          - set nat destination rule 10 description "NAT from WAN to web0x HTTP port 80"
+          - set nat destination rule 10 inbound-interface eth0
+          - set nat destination rule 10 source address 10.0.17.73/24
+          - set nat destination rule 10 protocol tcp
+          - set nat destination rule 10 destination port 80
+          - set nat destination rule 10 translation address 10.0.6.5
+ 
+    - name: Temp changes to open up OPT network for temp installs
+      vyos_config:
+        backup: yes
+        save: yes
+        lines:
+          - set firewall name OPT-to-WAN rule 1 action accept
+          - set firewall name OPT-to-WAN rule 1 description "Temporary rule to allow traffic out"
+
+    - name: Firewall changes for SSH into OPT from LAN
+      vyos_config:
+        backup: yes
+        save: yes
+        lines:
+          - set firewall name LAN-to-OPT rule 10 description "Allow SSH into devices in the OPT network"
+          - set firewall name LAN-to-OPT rule 10 action accept
+          - set firewall name LAN-to-OPT rule 10 protocol tcp
+          - set firewall name LAN-to-OPT rule 10 destination port 22
+          - set firewall name OPT-to-LAN rule 10 description "Allow established traffic back to LAN"
+          - set firewall name OPT-to-LAN rule 10 action accept
+          - set firewall name OPT-to-LAN rule 10 state established enable
+
+    - name: Set NAT Masquerading for OPT
+      vyos_config:
+        backup: yes
+        save: yes
+        lines:
+          - set nat source rule 20 description "Masquerading for OPT"
+          - set nat source rule 20 outbound-interface eth0
+          - set nat source rule 20 source address 10.0.6.0/24
+          - set nat source rule 20 translation address masquerade
