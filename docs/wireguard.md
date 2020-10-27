@@ -25,7 +25,7 @@ ip link set wg0 up
 Take note of the server's public key:
 
 ```
-cat /etc/wireguard/public
+cat /etc/wireguard/publickey
 ```
 
 ## Initial Client Setup
@@ -43,7 +43,7 @@ ip link set wg0 up
 Take note of the client's public key:
 
 ```
-cat /etc/wireguard/public
+cat /etc/wireguard/publickey
 ```
 
 ## Server Setup
