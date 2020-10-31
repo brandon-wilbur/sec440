@@ -6,3 +6,4 @@
 * [Database Redundancy Lab](database_redundancy/database_redundancy.md)
 * [Federated Identity Lab](federated_identity/federated_identity.md)
 * [WireGuard](wireguard.md)
+* [Beaker Browser](network_privacy/beaker-browser.md)
