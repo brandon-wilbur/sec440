@@ -53,5 +53,5 @@ Additionally, Hyperdrive can be configured using command-line tools with the [Hy
 When connecting to a remote Hyperdrive, the IP address and port of the remote peer will be exposed; this is by design in the protocol. This can be mitigated through the use of a VPN or proxy if possible, but mileage again may vary depending on NAT configurations possibly getting affected.
 
 ## References
-* [https://beakerbrowser.com/]
-* [https://hypercore-protocol.org/]
+* [https://beakerbrowser.com/](https://beakerbrowser.com/)
+* [https://hypercore-protocol.org/](https://hypercore-protocol.org/)
