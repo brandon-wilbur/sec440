@@ -2,6 +2,8 @@
 
 For this project, I chose to evaluate the [Beaker Browser](https://beakerbrowser.com/). This is a full web browser that features the use of the Hyperdrive, [part of the Hypercore protocol](https://github.com/hypercore-protocol), for peer-to-peer website hosting. When using this browser, Hyperdrive pages are accessed via `hyper://` preceding the peer's drive key. The goal of this project is to create a decentralized web while still guaranteeing authenticity of hosted content.
 
+[Demonstration Video](https://drive.google.com/file/d/1Z6gyop1-sy157cbjSNpoJ7E-69ojOTiZ/view?usp=sharing)
+
 ## Hyperdrive Protocol Deep Dive
 
 The Beaker Browser Docs give a [decent description of the protocol](https://docs.beakerbrowser.com/developers/introduction-to-hyperdrive) that is being used to serve up content. As a peer-to-peer network, the team acknowledges that many traits are shared with BitTorrent. The main way that peers are networked is with a [Distributed Hash Table (DHT)](https://en.wikipedia.org/wiki/Distributed_hash_table). This powers the Beaker browser by mapping content to the hash of a drive's public key. This protocol that actually allows peers to connect to other Hyperdrives is called Hyperswarm. In the DHT, routing information is published (IP address and port) to peers to establish connections.
