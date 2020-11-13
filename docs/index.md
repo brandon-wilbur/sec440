@@ -7,3 +7,4 @@
 * [Federated Identity Lab](federated_identity/federated_identity.md)
 * [WireGuard](wireguard.md)
 * [Beaker Browser](network_privacy/beaker-browser.md)
+* [LDAP Security](ldap_security/ldap_security.md)
